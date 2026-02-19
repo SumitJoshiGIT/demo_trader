@@ -8,10 +8,13 @@ class OrderManager:
     def __init__(self):
         self.client = BinanceFuturesClient(testnet=True)
 
-    def execute_order(self, symbol, side, order_type, quantity, price=None):
+    def execute_order(self, symbol, side, order_type, quantity, price=None, stop_price=None):
         try:
-            response = self.client.place_order(symbol, side, order_type, quantity, price)
-            self._print_order_summary(response)
+            # Pass stop_price to client if it's there
+            print(f"Executing order: {symbol} {side} {order_type} Qty={quantity} Price={price} Stop={stop_price}")
+            response = self.client.place_order(symbol, side, order_type, quantity, price=price, stop_price=stop_price)
+            if response:
+                self._print_order_summary(response)
             return response
         except Exception as e:
             logger.error(f"Order execution failed: {e}")

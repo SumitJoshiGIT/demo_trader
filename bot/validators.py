@@ -18,6 +18,6 @@ def validate_side(ctx, param, value):
 
 def validate_order_type(ctx, param, value):
     value = value.upper()
-    if value not in ['MARKET', 'LIMIT']:
-        raise click.BadParameter("Order type must be either MARKET or LIMIT.")
+    if value not in ['MARKET', 'LIMIT', 'STOP_MARKET']:
+        raise click.BadParameter("Order type must be MARKET, LIMIT, or STOP_MARKET.")
     return value
