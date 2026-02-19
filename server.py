@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional
 import os
+import json
 
 from bot.client import BinanceFuturesClient
 from bot.database import init_db, log_order, get_history, save_setting, get_setting
@@ -19,6 +20,17 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Templates
 templates = Jinja2Templates(directory="templates")
+
+# Register custom Jinja filters
+def from_json(value):
+    try:
+        if isinstance(value, dict):
+            return value
+        return json.loads(value)
+    except (TypeError, json.JSONDecodeError):
+        return {}
+
+templates.env.filters["from_json"] = from_json
 
 # Global Client Instance (refreshed on key update)
 client_instance = None

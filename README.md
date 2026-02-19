@@ -26,6 +26,37 @@ A Python application to place Market and Limit orders on the Binance Futures Tes
      ```
    - Open `.env` and paste your Testnet API Key and Secret.
 
+## Tutorial: Your First Trade
+
+This 5-minute guide will help you place your first order on the Binance Futures Testnet.
+
+### Step 1: Get Testnet Credentials
+1.  Go to [testnet.binancefuture.com](https://testnet.binancefuture.com/en/futures/BTCUSDT).
+2.  Log in or Register.
+3.  Scroll down to find your **API Key** and **Secret Key**. (Do not share these!).
+
+### Step 2: Launch the Dashboard
+Start the local server:
+```bash
+python server.py
+```
+Open your browser and navigate to: [http://localhost:8000](http://localhost:8000)
+
+### Step 3: Configure the Bot
+1.  In the top-right corner or the "API Configuration" modal, enter the **API Key** and **Secret Key** you got in Step 1.
+2.  Click **Save Credentials**.
+
+### Step 4: Place an Order
+1.  **Select Side**: Choose **Buy / Long** (Green).
+2.  **Symbol**: Default is `BTCUSDT`.
+3.  **Order Type**: Keep it as `MARKET` for immediate execution.
+4.  **Size**: Enter `0.002` (This is ~100-150 USDT value).
+5.  Click the big green **Buy / Long** button.
+
+### Step 5: Verify
+-   Look at the **Order History** table below the chart. You should see a new row with Status `FILLED`.
+-   You can also check your [Binance Testnet Account](https://testnet.binancefuture.com/en/futures/BTCUSDT) to see the open position.
+
 ## Testing
 
 To run the automated tests for validators, client, and order logic:
@@ -40,7 +71,9 @@ To run the automated tests for validators, client, and order logic:
     pytest tests/
     ```
 
-## Usage
+## Advanced Usage (CLI)
+
+If you prefer the command line:
 
 ### CLI Mode
 
