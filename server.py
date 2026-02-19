@@ -15,6 +15,9 @@ app = FastAPI(title="Binance Trading Bot UI")
 # Initialize Database
 init_db()
 
+# Create static directory if not exists
+os.makedirs("static", exist_ok=True)
+
 # Mount static files (css, js)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -85,7 +88,8 @@ async def place_order(
     side: str = Form(...),
     order_type: str = Form(...),
     quantity: float = Form(...),
-    price: Optional[float] = Form(None)
+    price: Optional[float] = Form(None),
+    stop_price: Optional[float] = Form(None)
 ):
     client = get_client()
     if not client or not client.client:
@@ -96,25 +100,33 @@ async def place_order(
         })
 
     try:
-        response = client.place_order(symbol, side, order_type, quantity, price)
+        response = client.place_order(symbol, side, order_type, quantity, price, stop_price)
         # Log to DB
         order_data = {
             "symbol": symbol, "side": side, "type": order_type, 
             "quantity": quantity, "price": price
         }
+        # Add stop price to response object for logging if it's not there
+        if stop_price:
+            response['stopPrice'] = stop_price
+            
         log_order(order_data, response)
         
         return templates.TemplateResponse("index.html", {
-            "request": request,
+            "request": request, # Pass request context
             "success": f"Order {response.get('status')}! ID: {response.get('orderId')}",
             "history": get_history(),
-            "last_order": response
+            "last_order": response,
+            "api_key": get_setting('BINANCE_API_KEY') or "",
+            "has_secret": bool(get_setting('BINANCE_API_SECRET'))
         })
     except Exception as e:
         return templates.TemplateResponse("index.html", {
-            "request": request,
+            "request": request, # Pass request context
             "error": f"Failed to place order: {str(e)}",
-            "history": get_history()
+            "history": get_history(),
+            "api_key": get_setting('BINANCE_API_KEY') or "",
+            "has_secret": bool(get_setting('BINANCE_API_SECRET'))
         })
 
 if __name__ == "__main__":

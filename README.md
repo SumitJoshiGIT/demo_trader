@@ -1,5 +1,7 @@
 # Trading Bot (Binance Futures Testnet)
 
+**[Live Demo](https://demo-trader.onrender.com)**
+
 A Python application to place Market and Limit orders on the Binance Futures Testnet.
 
 ## Prerequisites

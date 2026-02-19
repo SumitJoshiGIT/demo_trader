@@ -37,14 +37,14 @@ class BinanceFuturesClient:
             logger.error(f"Unexpected error during init: {e}")
             raise
 
-    def place_order(self, symbol, side, order_type, quantity, price=None):
+    def place_order(self, symbol, side, order_type, quantity, price=None, stop_price=None):
         """
         Places an order on Binance Futures.
         """
         if not self.client:
              raise ValueError("Client not initialized. Please set API keys.")
 
-        logger.info(f"Placing order: Symbol={symbol}, Side={side}, Type={order_type}, Qty={quantity}, Price={price}")
+        logger.info(f"Placing order: Symbol={symbol}, Side={side}, Type={order_type}, Qty={quantity}, Price={price}, StopPrice={stop_price}")
         
         try:
             params = {
@@ -59,6 +59,20 @@ class BinanceFuturesClient:
                     raise ValueError("Price is required for LIMIT orders.")
                 params['price'] = price
                 params['timeInForce'] = 'GTC'  # Good Till Cancelled
+            
+            elif order_type == 'STOP_MARKET':
+                if stop_price is None:
+                    raise ValueError("Stop Price is required for STOP_MARKET orders.")
+                params['stopPrice'] = stop_price
+                # For Stop Market, we usually assume it's to close a position or enter.
+                # If entering, no special params needed besides stopPrice.
+            
+            elif order_type == 'STOP': # STOP LIMIT
+                if stop_price is None or price is None:
+                     raise ValueError("Price and Stop Price are required for STOP LIMIT orders.")
+                params['price'] = price
+                params['stopPrice'] = stop_price
+                params['timeInForce'] = 'GTC'
 
             # Execute order
             response = self.client.futures_create_order(**params)
