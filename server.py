@@ -91,6 +91,18 @@ async def place_order(
     price: Optional[float] = Form(None),
     stop_price: Optional[float] = Form(None)
 ):
+    # Validate Inputs
+    # ---------------------------------------------------------
+    if order_type == 'STOP_MARKET' and (stop_price is None or stop_price <= 0):
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "error": "Error: specific Stop Price is required for STOP_MARKET orders.",
+            "history": get_history(),
+            "api_key": get_setting('BINANCE_API_KEY') or "",
+            "has_secret": bool(get_setting('BINANCE_API_SECRET'))
+        })
+    # ---------------------------------------------------------
+
     client = get_client()
     if not client or not client.client:
         return templates.TemplateResponse("index.html", {

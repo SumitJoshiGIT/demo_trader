@@ -63,16 +63,19 @@ class BinanceFuturesClient:
             elif order_type == 'STOP_MARKET':
                 if stop_price is None:
                     raise ValueError("Stop Price is required for STOP_MARKET orders.")
-                params['stopPrice'] = stop_price
+                params['stopPrice'] = str(stop_price)
                 # For Stop Market, we usually assume it's to close a position or enter.
                 # If entering, no special params needed besides stopPrice.
             
             elif order_type == 'STOP': # STOP LIMIT
                 if stop_price is None or price is None:
                      raise ValueError("Price and Stop Price are required for STOP LIMIT orders.")
-                params['price'] = price
-                params['stopPrice'] = stop_price
+                params['price'] = str(price)
+                params['stopPrice'] = str(stop_price)
                 params['timeInForce'] = 'GTC'
+
+            # Log params for debugging
+            logger.info(f"Sending params to Binance: {params}")
 
             # Execute order
             response = self.client.futures_create_order(**params)
