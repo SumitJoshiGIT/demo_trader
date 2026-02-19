@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  trading-bot:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data  # Persist database and logs
+      - ./.env:/app/.env  # Mount .env file (optional if using UI for keys)
+    restart: always

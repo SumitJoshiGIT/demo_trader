@@ -1,0 +1,8 @@
+click
+python-binance
+python-dotenv
+fastapi
+uvicorn
+jinja2
+python-multipart
+pytest
